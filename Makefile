@@ -2,7 +2,7 @@
 VERSION = 4
 PATCHLEVEL = 14
 SUBLEVEL = 113
-EXTRAVERSION =
+EXTRAVERSION ?= 
 NAME = Petit Gorille
 
 # *DOCUMENTATION*
@@ -311,8 +311,8 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
 # Default value for CROSS_COMPILE is not to prefix executables
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
 export KBUILD_BUILDHOST := $(SUBARCH)
-ARCH		?=arm64
-CROSS_COMPILE	?=$(srctree)/toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+ARCH		?= arm64
+CROSS_COMPILE	?= 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
 SRCARCH 	:= $(ARCH)
@@ -373,7 +373,7 @@ HOST_LOADLIBES := $(HOST_LFS_LIBS)
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
 LDGOLD		= $(CROSS_COMPILE)ld.gold
-CC		= $(srctree)/toolchain/clang/host/linux-x86/clang-4639204/bin/clang
+CC		= $(srctree)/toolchain/clang-4691093/bin/clang
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -387,6 +387,14 @@ DEPMOD		= /sbin/depmod
 PERL		= perl
 PYTHON		= python
 CHECK		= sparse
+
+# print out LD and CC paths
+$(info LD is $(LD))
+$(info CC is $(CC))
+$(info CROSS_COMPILE is $(CROSS_COMPILE))
+$(info ARCH is $(ARCH))
+$(info SRCARCH is $(SRCARCH))
+$(info CLANG_TRIPLE is $(CLANG_TRIPLE))
 
 ifeq ($(CONFIG_EXYNOS_FMP_FIPS),)
 READELF        = $(CROSS_COMPILE)readelf
@@ -507,7 +515,7 @@ endif
 
 ifeq ($(cc-name),clang)
 ifneq ($(CROSS_COMPILE),)
-CLANG_TRIPLE	?= $(srctree)/toolchain/clang/host/linux-x86/clang-4639204/bin/aarch64-linux-gnu-
+CLANG_TRIPLE	?= $(srctree)/toolchain/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9/bin/aarch64-linux-gnu-
 CLANG_FLAGS	:= --target=$(notdir $(CLANG_TRIPLE:%-=%))
 ifeq ($(shell $(srctree)/scripts/clang-android.sh $(CC) $(CLANG_FLAGS)), y)
 $(error "Clang with Android --target detected. Did you specify CLANG_TRIPLE?")

@@ -389,12 +389,12 @@ PYTHON		= python
 CHECK		= sparse
 
 # print out LD and CC paths
-$(info LD is $(LD))
-$(info CC is $(CC))
-$(info CROSS_COMPILE is $(CROSS_COMPILE))
-$(info ARCH is $(ARCH))
-$(info SRCARCH is $(SRCARCH))
-$(info CLANG_TRIPLE is $(CLANG_TRIPLE))
+# $(info LD is $(LD))
+# $(info CC is $(CC))
+# $(info CROSS_COMPILE is $(CROSS_COMPILE))
+# $(info ARCH is $(ARCH))
+# $(info SRCARCH is $(SRCARCH))
+# $(info CLANG_TRIPLE is $(CLANG_TRIPLE))
 
 ifeq ($(CONFIG_EXYNOS_FMP_FIPS),)
 READELF        = $(CROSS_COMPILE)readelf

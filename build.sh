@@ -44,6 +44,14 @@ if [ "$FILENAME" == "cleanup" ]; then
     exit 0
 fi
 
+# if filename is cleanup then cleanup
+if [ "$FILENAME" == "menuconfig" ]; then
+    echo "[BUILD]: Cleaning up.."
+    K_MAKE exynos9610-m31nsxx_defconfig
+    K_MAKE menuconfig
+    exit 0
+fi
+
 K_MAKE exynos9610-m31nsxx_defconfig
 # K_MAKE menuconfig
 K_MAKE -j$(nproc --all)

@@ -1,0 +1,25 @@
+name: Android kernel build test
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  TestBuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ↗️ Checkout
+        uses: actions/checkout@v2
+      - name: ⚙️ setup dependencies
+        run: |
+          sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get build-dep -y linux
+      - name: 🔨 Setup toolchain
+        run: |
+          mkdir -p ~/toolchain
+          sudo bash resolv_toolchain_linux.sh
+      - name: 🏗️ Build Kernel
+        run: |
+          ./cleanup
+          sudo bash build.sh

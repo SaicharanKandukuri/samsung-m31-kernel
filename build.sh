@@ -44,7 +44,6 @@ if [ "$FILENAME" == "cleanup" ]; then
     exit 0
 fi
 
-K_MAKE mrproper
-K_MAKE clean
 K_MAKE exynos9610-m31nsxx_defconfig
+K_MAKE menuconfig
 K_MAKE -j$(nproc --all)

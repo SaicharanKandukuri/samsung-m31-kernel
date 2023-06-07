@@ -1,0 +1,99 @@
+From 747584761f88f0c25806812189d16effb2314aa3 Mon Sep 17 00:00:00 2001
+From: LMAO-armv8 <chaitanya4g9@sasi.ac.in>
+Date: Tue, 7 Jun 2022 19:16:10 +0530
+Subject: [PATCH] ARM64: Add support to build device tree blob image - Uses
+ same procedure as dtbo image generation - Generates dtb_exynos.img from
+ dtb_exynos.cfg which specifies the partition details
+
+commit issued from FreshROMs/android_kernel_samsung_exynos9610_mint@ac75d3d
+---
+ arch/arm64/Makefile                       | 6 ++++++
+ arch/arm64/boot/Makefile                  | 6 +++++-
+ arch/arm64/boot/dts/exynos/dtb_exynos.cfg | 3 +++
+ scripts/Makefile.lib                      | 8 ++++++++
+ 4 files changed, 22 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/dtb_exynos.cfg
+
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 9e0a84a64..7ac6b910f 100755
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -156,6 +156,7 @@ endif
+ KBUILD_DTBS	:= dtbs
+ 
+ KBUILD_DTBO_EXYNOS_IMG := dtbo_exynos.img
++KBUILD_DTB_EXYNOS_IMG := dtb_exynos.img
+ 
+ all:	Image.gz $(KBUILD_DTBS) $(subst $\",,$(CONFIG_BUILD_ARM64_APPENDED_KERNEL_IMAGE_NAME))
+ 
+@@ -194,6 +195,11 @@ $(KBUILD_DTBO_EXYNOS_IMG): dtbs
+ 
+ all: $(KBUILD_DTBO_EXYNOS_IMG)
+ 
++$(KBUILD_DTB_EXYNOS_IMG): dtbs
++	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
++
++all: $(KBUILD_DTB_EXYNOS_IMG)
++
+ PHONY += vdso_install
+ vdso_install:
+ 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso $@
+diff --git a/arch/arm64/boot/Makefile b/arch/arm64/boot/Makefile
+index 408c79c57..6c50905cb 100755
+--- a/arch/arm64/boot/Makefile
++++ b/arch/arm64/boot/Makefile
+@@ -18,7 +18,7 @@ include $(srctree)/arch/arm64/boot/dts/Makefile
+ 
+ OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
+ 
+-targets := Image Image.gz dtbo_exynos.img
++targets := Image Image.gz dtbo_exynos.img dtb_exynos.img
+ 
+ DTB_NAMES := $(subst $\",,$(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES))
+ ifneq ($(DTB_NAMES),)
+@@ -29,6 +29,7 @@ endif
+ DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))
+ 
+ DTBO_OBJS_EXYNOS := $(shell find $(obj)/dts/samsung -name \*.dtbo)
++DTB_OBJS_EXYNOS := $(shell find $(obj)/dts/exynos -name \*.dtb)
+ 
+ $(obj)/Image: vmlinux FORCE
+ 	$(call if_changed,objcopy)
+@@ -57,6 +58,9 @@ $(obj)/Image.gz-dtb: $(obj)/Image.gz $(DTB_OBJS) FORCE
+ $(obj)/dtbo_exynos.img: $(DTBO_OBJS_EXYNOS) FORCE
+ 	$(call if_changed,mkdtimg)
+ 
++$(obj)/dtb_exynos.img: $(DTB_OBJS_EXYNOS) FORCE
++	$(call if_changed,mkdtbimg)
++
+ install:
+ 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
+ 	$(obj)/Image System.map "$(INSTALL_PATH)"
+diff --git a/arch/arm64/boot/dts/exynos/dtb_exynos.cfg b/arch/arm64/boot/dts/exynos/dtb_exynos.cfg
+new file mode 100644
+index 000000000..8a41febc7
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/dtb_exynos.cfg
+@@ -0,0 +1,3 @@
++exynos9610.dtb
++  custom0=0x00000000
++  custom1=0xff000000
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 0f24624c7..86a1515f1 100755
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -327,6 +327,14 @@ cmd_mkdtimg = $(PYTHON) $(srctree)/scripts/mkdtboimg.py cfg_create $@ \
+ 		$(srctree)/$(dts_dir)/dtbo_exynos.cfg \
+ 		--dtb-dir $(objtree)/$(dts_dir)
+ 
++# mkdtbimg
++#----------------------------------------------------------------------------
++dtb_dir = arch/arm64/boot/dts/exynos
++quiet_cmd_mkdtbimg = DTBIMG $@
++cmd_mkdtbimg = $(PYTHON) $(srctree)/scripts/mkdtboimg.py cfg_create $@ \
++		$(srctree)/$(dtb_dir)/dtb_exynos.cfg \
++		--dtb-dir $(objtree)/$(dtb_dir)
++
+ # cat
+ # ---------------------------------------------------------------------------
+ # Concatentate multiple files together

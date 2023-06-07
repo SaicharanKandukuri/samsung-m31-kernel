@@ -294,5 +294,16 @@ config ARCH_EXYNOS9
 	help
 	  Samsung EXYNOS9 (Meercat/Ananke) SoC based systems
 
+choice
+        prompt "EXYNOS 9611 DTBO TARGET"
+
+config DTBO_M31
+        bool "Samsung Galaxy M31 dtbo"
+
+config DTBO_M31S
+        bool "Samsung Galaxy M31S dtbo"
+
+endchoice
+
 endmenu
 endmenu

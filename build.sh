@@ -55,3 +55,18 @@ fi
 K_MAKE exynos9610-m31nsxx_defconfig
 # K_MAKE menuconfig
 K_MAKE -j$(nproc --all)
+
+# AIK pack
+
+echo "[BUILD]: AIK pack.."
+echo -e "\t ./SM-M315f_kernel.sh"
+
+cp -rv arch/arm64/boot/Image ./AIK/Image
+cp -rv arch/arm64/boot/dtb_exynos.img AIK/dtb
+cp -rv arch/arm64/boot/dtbo_exynos.img AIK/dtbo
+
+cd AIK || exit 1
+rm -vf ./*.zip
+zip -r ../SM-M315f_kernel.zip * -x .git README.md
+cd .. || exit 1
+

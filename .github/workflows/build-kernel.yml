@@ -18,6 +18,11 @@ jobs:
         run: |
           mkdir -p ~/toolchain
           bash resolv_toolchain_linux.sh
+      - name: 📦 Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: kernel
+          path: SM-M315f_kernel.zip
       - name: 🏗️ Build Kernel
         run: |
           ./cleanup

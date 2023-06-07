@@ -323,9 +323,16 @@ dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
 #----------------------------------------------------------------------------
 dts_dir = arch/arm64/boot/dts/samsung
 quiet_cmd_mkdtimg = DTBOIMG $@
+ifeq ($(CONFIG_DTBO_M31),y)
 cmd_mkdtimg = $(PYTHON) $(srctree)/scripts/mkdtboimg.py cfg_create $@ \
-		$(srctree)/$(dts_dir)/dtbo_exynos.cfg \
-		--dtb-dir $(objtree)/$(dts_dir)
+                $(srctree)/$(dts_dir)/dtbo_m31.cfg \
+        	--dtb-dir $(objtree)/$(dts_dir)
+endif
+ifeq ($(CONFIG_DTBO_M31S),y)
+cmd_mkdtimg = $(PYTHON) $(srctree)/scripts/mkdtboimg.py cfg_create $@ \
+                $(srctree)/$(dts_dir)/dtbo_m31s.cfg \
+                --dtb-dir $(objtree)/$(dts_dir)
+endif
 
 # mkdtbimg
 #----------------------------------------------------------------------------
